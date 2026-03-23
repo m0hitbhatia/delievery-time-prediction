@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delivery Time Predictor</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f5f5f5;
+            padding: 40px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            width: 400px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+        }
+        button {
+            background: green;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: darkgreen;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Delivery Time Prediction</h2>
+
+    <label>Distance (km)</label>
+    <input type="number" id="distance">
+
+    <label>Weather</label>
+    <select id="weather">
+        <option>Clear</option>
+        <option>Rainy</option>
+        <option>Foggy</option>
+    </select>
+
+    <label>Traffic Level</label>
+    <select id="traffic">
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+    </select>
+
+    <label>Time of Day</label>
+    <select id="time">
+        <option>Morning</option>
+        <option>Afternoon</option>
+        <option>Evening</option>
+        <option>Night</option>
+    </select>
+
+    <label>Vehicle Type</label>
+    <select id="vehicle">
+        <option>Bike</option>
+        <option>Scooter</option>
+        <option>Car</option>
+    </select>
+
+    <label>Preparation Time (min)</label>
+    <input type="number" id="prep">
+
+    <label>Courier Experience (years)</label>
+    <input type="number" id="exp">
+
+    <button onclick="predict()">Submit</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+async function predict() {
+
+    const data = {
+        Distance_km: parseFloat(document.getElementById("distance").value),
+        Weather: document.getElementById("weather").value,
+        Traffic_Level: document.getElementById("traffic").value,
+        Time_of_Day: document.getElementById("time").value,
+        Vehicle_Type: document.getElementById("vehicle").value,
+        Preparation_Time_min: parseFloat(document.getElementById("prep").value),
+        Courier_Experience_yrs: parseFloat(document.getElementById("exp").value)
+    };
+
+    const response = await fetch("http://127.0.0.1:8000/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    document.getElementById("result").innerHTML =
+        "Predicted Delivery Time: " + result.predicted_delivery_time_min + " min<br>" +
+        "Delay Prediction: " + result.delay_prediction;
+}
+</script>
+
+</body>
+</html>
